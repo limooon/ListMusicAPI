@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import { BarraSerch } from "./componentes/BarraSerch";
+import { ListaCanciones } from "./componentes/ListaCanciones";
+import { ResultadosSerch } from "./componentes/ResultadosSerch";
+import { ListaReproducion } from "./componentes/ListaReproducion";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [resultados, setResultados] = useState([]);
+  const [cancionesSeleccionadas, setCancionesSeleccionadas] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
+
+  const agregarAColeccion = (cancion) => {
+    if (!cancionesSeleccionadas.find((track) => track.id === cancion.id)) {
+      setCancionesSeleccionadas([...cancionesSeleccionadas, cancion]);
+    }
+  };
+
+  const crearPlaylist = (nombre) => {
+    if (nombre.trim() !== "" && cancionesSeleccionadas.length > 0) {
+      setPlaylists([...playlists, { nombre, canciones: cancionesSeleccionadas }]);
+      setCancionesSeleccionadas([]);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app">
+      <header className="app-header">
+        <h1>Mi Aplicación de Spotify</h1>
+      </header>
+      <main className="app-main">
+        <BarraSerch setResultados={setResultados} />
+        <div className="app-content">
+          <ResultadosSerch canciones={resultados} agregarAColeccion={agregarAColeccion} />
+          <ListaCanciones cancionesSeleccionadas={cancionesSeleccionadas} crearPlaylist={crearPlaylist} />
+          <ListaReproducion playlists={playlists} />
+        </div>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
